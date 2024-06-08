@@ -48,12 +48,12 @@ override_utf8_locale no
 TEXT
 S Y S T E M    I N F O
 \${hr}
-Host:\$alignr\$nodename
-Uptime:\$alignr\$uptime
-RAM:\$alignr\$mem/\$memmax
-Swap usage:\$alignr\$swap/\$swapmax
-Disk usage:\$alignr\${fs_used /}/\${fs_size /}
-CPU usage:\$alignr\${cpu cpu0}%
-Local IP:\$alignr\${addr ${interface}}
-DOWN: \${downspeed ${interface}}/s\$alignr UP: \${upspeed ${interface}}/s
+Host:$alignr$nodename
+Uptime:$alignr$uptime
+RAM:$alignr$mem/$memmax
+Swap usage:$alignr$swap/$swapmax
+Disk usage:$alignr${fs_used /}/${fs_size}
+CPU usage:$alignr${cpu cpu0}%
+Local IP:$alignr${addr $ens3233} ### Enter Your enterface instead of ens3233
+DOWN: ${downspeed ${interface}}/s$alignr UP: ${upspeed ${interface}}/s
 # ip link
