@@ -6,7 +6,8 @@ on:
       file_url:
         description: 'The URL of the file to download'
         required: true
-
+permissions:
+  contents: write
 jobs:
   download_and_release:
     runs-on: ubuntu-latest
@@ -37,6 +38,4 @@ jobs:
         tag: "${{ steps.extract_filename.outputs.filename }}-${{ steps.get_date.outputs.date }}"
         name: "Release ${{ steps.extract_filename.outputs.filename }} on ${{ steps.get_date.outputs.date }}"
         body: 'This is a release created by GitHub Actions'
-        allowUpdates: true
-        removeArtifacts: true
         artifacts: download/*
