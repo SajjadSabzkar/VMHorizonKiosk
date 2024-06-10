@@ -15,6 +15,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
+    - name: Install GitHub CLI
+      run: |
+        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
+        sudo apt-add-repository https://cli.github.com/packages
+        sudo apt-get update
+        sudo apt-get install gh
+
     - name: Extract file name from URL
       id: extract_filename
       run: |
@@ -28,21 +35,12 @@ jobs:
       run: |
         curl -L ${{ github.event.inputs.file_url }} -o ${{ steps.extract_filename.outputs.filename }}
 
-    - name: Create Release
-      id: create_release
-      uses: ncipollo/release-action@v1
-      with:
-        tag: "${{ steps.extract_filename.outputs.filename }}-${{ steps.get_date.outputs.date }}"
-        name: "Release ${{ steps.extract_filename.outputs.filename }} on ${{ steps.get_date.outputs.date }}"
-        body: 'This is a release created by GitHub Actions'
-        draft: false
-        prerelease: false
-        files: ${{ steps.extract_filename.outputs.filename }}
-
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ steps.extract_filename.outputs.filename }}
-        asset_name: ${{ steps.extract_filename.outputs.filename }}
-        asset_content_type: application/octet-stream
+    - name: Create Release and Upload Asset
+      run: |
+        gh release create "${{ steps.extract_filename.outputs.filename }}-${{ steps.get_date.outputs.date }}" \
+          --title "Release ${{ steps.extract_filename.outputs.filename }} on ${{ steps.get_date.outputs.date }}" \
+          --notes "This is a release created by GitHub Actions" \
+          --draft false \
+          --prerelease false \
+          download/${{ steps.extract_filename.outputs.filename }}
+      working-directory: ${{ github.workspace }}
