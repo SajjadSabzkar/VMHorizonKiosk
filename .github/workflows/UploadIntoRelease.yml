@@ -1,31 +1,48 @@
-name: Upload To Release
-on: 
+name: Download and Release
+
+on:
   workflow_dispatch:
     inputs:
-       file_url:
-       description: "Set file url."
-       required: true
+      file_url:
+        description: 'The URL of the file to download'
+        required: true
+
 jobs:
-  build:
-    runs-on: ubuntu-22.04
+  download_and_release:
+    runs-on: ubuntu-latest
+
     steps:
-      - name: get file
-        id: down
-        run: |
-          # Get the url of the rebuild armbian file
-          mkdir -p MyDownload && cd MyDownload 
-          file_url="${{ inputs.file_url }}"
-          if  [[ -z "${file_url}" ]]; then
-              download_file=$(curl -s "${file_url}" | grep -oE "${file_url}" | head -n 1)
-              if [[ -n "${download_file}" ]]; then
-                  file_url="${download_file}"
-              else
-                  echo -e "Invalid download path: [ ${file_url} ]"
-                  exit 1
-              fi
-          fi
-     - name: Upload
-       id: up
-       
-       
-     
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Extract file name from URL
+      id: extract_filename
+      run: |
+        echo "::set-output name=filename::$(basename ${{ github.event.inputs.file_url }})"
+
+    - name: Get current date
+      id: get_date
+      run: echo "::set-output name=date::$(date +'%Y%m%d%H%M%S')"
+
+    - name: Download file
+      run: |
+        curl -L ${{ github.event.inputs.file_url }} -o ${{ steps.extract_filename.outputs.filename }}
+
+    - name: Create Release
+      id: create_release
+      uses: ncipollo/release-action@v1
+      with:
+        tag: "${{ steps.extract_filename.outputs.filename }}-${{ steps.get_date.outputs.date }}"
+        name: "Release ${{ steps.extract_filename.outputs.filename }} on ${{ steps.get_date.outputs.date }}"
+        body: 'This is a release created by GitHub Actions'
+        draft: false
+        prerelease: false
+        files: ${{ steps.extract_filename.outputs.filename }}
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ${{ steps.extract_filename.outputs.filename }}
+        asset_name: ${{ steps.extract_filename.outputs.filename }}
+        asset_content_type: application/octet-stream
