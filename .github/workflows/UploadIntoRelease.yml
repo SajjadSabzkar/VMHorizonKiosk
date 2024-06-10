@@ -1,6 +1,5 @@
 name: Upload To Release
 on: 
-  repository_dispatch:
   workflow_dispatch:
     inputs:
        file_url:
