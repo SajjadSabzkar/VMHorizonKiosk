@@ -1,0 +1,32 @@
+name: Upload To Release
+on: 
+  repository_dispatch:
+  workflow_dispatch:
+    inputs:
+       file_url:
+        description: "Set Armbian file path."
+        required: true
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: get file
+        id: down
+        run: |
+          # Get the url of the rebuild armbian file
+          mkdir -p MyDownload && cd MyDownload 
+          file_url="${{ inputs.file_url }}"
+          if  [[ -z "${file_url}" ]]; then
+              download_file=$(curl -s "${file_url}" | grep -oE "${file_url}" | head -n 1)
+              if [[ -n "${download_file}" ]]; then
+                  file_url="${download_file}"
+              else
+                  echo -e "Invalid download path: [ ${file_url} ]"
+                  exit 1
+              fi
+          fi
+     - name: Upload
+       id: up
+       
+       
+     
