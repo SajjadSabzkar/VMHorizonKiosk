@@ -24,9 +24,11 @@ jobs:
       id: get_date
       run: echo "::set-output name=date::$(date +'%Y%m%d%H%M%S')"
 
+    - name: Create download directory
+      run: mkdir -p download
     - name: Download file
       run: |
-        curl -L ${{ github.event.inputs.file_url }} -o ${{ steps.extract_filename.outputs.filename }}
+        curl -L ${{ github.event.inputs.file_url }} -o download/${{ steps.extract_filename.outputs.filename }}
 
     - name: Create Release
       id: create_release
@@ -37,4 +39,4 @@ jobs:
         body: 'This is a release created by GitHub Actions'
         allowUpdates: true
         removeArtifacts: true
-        artifacts: ${{ steps.extract_filename.outputs.filename }}/*
+        artifacts: download/*
