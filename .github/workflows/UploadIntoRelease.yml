@@ -3,8 +3,8 @@ on:
   workflow_dispatch:
     inputs:
        file_url:
-        description: "Set Armbian file path."
-        required: true
+       description: "Set file url."
+       required: true
 jobs:
   build:
     runs-on: ubuntu-22.04
