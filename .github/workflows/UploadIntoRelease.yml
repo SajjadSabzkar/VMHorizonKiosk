@@ -35,7 +35,7 @@ jobs:
       id: create_release
       uses: ncipollo/release-action@v1
       with:
-        tag: "${{ steps.extract_filename.outputs.filename }}-${{ steps.get_date.outputs.date }}"
-        name: "Release ${{ steps.extract_filename.outputs.filename }} on ${{ steps.get_date.outputs.date }}"
-        body: 'This is a release created by GitHub Actions'
+        tag: "UploadAt-${{ steps.get_date.outputs.date }}"
+        name: "Upload  ${{ steps.extract_filename.outputs.filename }}"
+        body: 'Download ${{ steps.extract_filename.outputs.filename }}'
         artifacts: download/*
