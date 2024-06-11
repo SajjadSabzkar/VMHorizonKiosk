@@ -16,10 +16,22 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Extract file name from URL
-      id: extract_filename
+    - name: Extract file URL array
+      id: extract_file_url_array
       run: |
-        echo "::set-output name=filename::$(basename ${{ github.event.inputs.file_url }})"
+        IFS=',' read -r -a file_url_array <<< "${{ github.event.inputs.file_urls }}"
+        echo "::set-output name=file_url_array::${file_url_array[*]}"
+    
+    - name: Extract filenames
+      id: extract_filenames
+      run: |
+        IFS=' ' read -r -a file_url_array <<< "${{ steps.extract_file_url_array.outputs.file_url_array }}"
+        filenames=()
+        for file_url in "${file_url_array[@]}"; do
+          filename=$(basename "$file_url")
+          filenames+=("$filename")
+        done
+        echo "::set-output name=filenames::${filenames[*]}"
 
     - name: Get current date
       id: get_date
@@ -39,6 +51,6 @@ jobs:
       uses: ncipollo/release-action@v1
       with:
         tag: "UploadAt-${{ steps.get_date.outputs.date }}"
-        name: "Upload  ${{ steps.extract_filename.outputs.filename }}"
-        body: 'Download ${{ steps.extract_filename.outputs.filename }}'
+        name: "Upload  ${{ steps.extract_filenames.outputs.filenames }}"
+        body: 'Download ${{ steps.extract_filenames.outputs.filenames }}'
         artifacts: download/*
