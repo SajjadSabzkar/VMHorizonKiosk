@@ -3,8 +3,8 @@ name: Download and Release
 on:
   workflow_dispatch:
     inputs:
-      file_url:
-        description: 'The URL of the file to download'
+      file_urls:
+        description: 'Comma-separated file URLs to download, e.g., https://example.com/file1.zip,https://example.com/file2.zip'
         required: true
 permissions:
   contents: write
@@ -27,10 +27,13 @@ jobs:
 
     - name: Create download directory
       run: mkdir -p download
-    - name: Download file
+    - name: Download files
       run: |
-        curl -L ${{ github.event.inputs.file_url }} -o download/${{ steps.extract_filename.outputs.filename }}
-
+         IFS=',' read -r -a file_url_array <<< "${{ github.event.inputs.file_urls }}"
+         for file_url in "${file_url_array[@]}"; do
+          filename=$(basename $file_url)
+          curl -L $file_url -o download/$filename
+         done
     - name: Create Release
       id: create_release
       uses: ncipollo/release-action@v1
