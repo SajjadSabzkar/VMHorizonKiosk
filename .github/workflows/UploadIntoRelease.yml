@@ -51,6 +51,6 @@ jobs:
       uses: ncipollo/release-action@v1
       with:
         tag: "UploadAt-${{ steps.get_date.outputs.date }}"
-        name: "Doanload necessary files"
+        name: "Download necessary files"
         body: 'Download ${{ steps.extract_filenames.outputs.filenames }}'
         artifacts: download/*
