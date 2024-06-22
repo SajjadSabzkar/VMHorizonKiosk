@@ -14,16 +14,30 @@ read -p "Enter username: " username
 
 
 # ==== TODO
-#cd /tmp
-#mkdir horizon
-#cd horizon
-#rm *deb > /dev/null 2>&1
-#chmod +x VMware-Horizon-Client-5.5.6-21405009.x64.bundle
-#./VMware-Horizon-Client-5.5.6-21405009.x64.bundle
-
-#cd ..
-#rm -rf horizon
-# ==== TODO
+echo "INFO: Installation VMware Horizon"
+export TERM=dumb
+export VMWARE_EULAS_AGREED=yes
+cd /tmp
+mkdir horizon
+cd horizon
+rm *deb > /dev/null 2>&1
+rm *bundle > /dev/null 2>&1
+wget -c https://github.com/SajjadSabzkar/VMHorizonKiosk/releases/download/UploadAt-20240611154532/VMware-Horizon-Client-5.5.6-21405009.x64.bundle -O VMware-Horizon-Client-5.5.6-21405009.x64.bundle
+chmod +x VMware-Horizon-Client-5.5.6-21405009.x64.bundle
+./VMware-Horizon-Client-5.5.6-21405009.x64.bundle --console  --eulas-agreed --required	 \
+--set-setting vmware-horizon-usb usbEnable yes \
+--set-setting vmware-horizon-smartcard smartcardEnable yes \
+--set-setting vmware-horizon-rtav rtavEnable yes \
+--set-setting vmware-horizon-tsdr tsdrEnable yes \
+--set-setting vmware-horizon-scannerclient scannerEnable yes \
+--set-setting vmware-horizon-serialportclient serialportEnable yes \
+--set-setting vmware-horizon-mmr mmrEnable yes \
+--set-setting vmware-horizon-media-provider mediaproviderEnable yes \
+--set-setting vmware-horizon-integrated-printing vmipEnable yes \
+--set-setting vmware-horizon-html5mmr html5mmrEnable yes
+cd ..
+rm -rf horizon
+# ==== TODO Maybe needs to be change 
 
 
 
